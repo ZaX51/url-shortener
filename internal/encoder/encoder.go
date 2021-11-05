@@ -2,11 +2,12 @@ package encoder
 
 import (
 	"crypto/md5"
-	"encoding/base32"
+
+	"github.com/ZaX51/url-shortener/internal/base62"
 )
 
 func Encode(s string) string {
 	crc := md5.Sum([]byte(s))
 
-	return base32.HexEncoding.EncodeToString(crc[:])
+	return base62.ToBase62(crc[:])
 }
