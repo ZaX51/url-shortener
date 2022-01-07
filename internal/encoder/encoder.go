@@ -6,8 +6,8 @@ import (
 	"github.com/ZaX51/url-shortener/internal/base62"
 )
 
-func Encode(s string) string {
-	crc := md5.Sum([]byte(s))
+func Encode(text string, length int) string {
+	crc := md5.Sum([]byte(text))
 
-	return base62.ToBase62(crc[:])
+	return base62.ToBase62(crc[:])[:length]
 }

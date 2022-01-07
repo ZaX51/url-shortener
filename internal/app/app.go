@@ -6,30 +6,40 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ZaX51/url-shortener/internal/url_storage"
 	"github.com/gorilla/mux"
 )
 
-const apiRoutesPrefix = "/api"
-
 type App struct {
-	server *http.Server
+	server      *http.Server
+	url_storage *url_storage.UrlStorage
 }
 
 func (p *App) Init(port int) {
 	r := mux.NewRouter()
-	s := r.PathPrefix(apiRoutesPrefix).Subrouter()
 
-	s.HandleFunc("/cut", p.handleUrlCut).Methods(http.MethodPost)
+	r.HandleFunc("/cut", p.handleUrlCut).Methods(http.MethodPost)
+	r.HandleFunc("/{hash}", p.handleUrlOpen).Methods(http.MethodGet)
 
 	p.server = &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
-		Handler:      s,
+		Handler:      r,
 		WriteTimeout: 10 * time.Second,
 		ReadTimeout:  10 * time.Second,
+	}
+
+	p.url_storage = &url_storage.UrlStorage{
+		Addr:       "localhost:6379",
+		Expiration: 20 * time.Second,
 	}
 }
 
 func (p *App) Run() {
+	err := p.url_storage.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Printf("Server listening on %s\n", p.server.Addr)
 	log.Fatal(p.server.ListenAndServe())
 }
