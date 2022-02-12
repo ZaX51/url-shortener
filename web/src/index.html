@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./index.css" rel="stylesheet">
+    <script type="module" src="./index.ts"></script>
+    <title>URL Shortener</title>
+</head>
+
+<body class="bg-slate-700">
+    <div class="container mx-auto grid place-items-center h-screen">
+        <div class="bg-slate-400 rounded-md px-12 py-10">
+            <div id="cut-result" class="hidden">
+                <input
+                    class="text-lg border-gray-300 rounded-md shadow-sm px-5 py-3 focus:ring-indigo-500 focus:border-indigo-500 w-96"
+                    type="url" id="cut-result-input">
+
+                <button
+                    class="text-lg border border-solid border-indigo-600 rounded-md shadow-sm px-5 py-3 cursor-pointer font-medium text-white bg-indigo-600 hover:bg-indigo-700 w-28"
+                    id="cut-result-copy">Copy</button>
+            </div>
+
+            <form id="cut-form">
+                <input
+                    class="text-lg border-gray-300 rounded-md shadow-sm px-5 py-3 focus:ring-indigo-500 focus:border-indigo-500 w-96"
+                    type="url" name="url" id="cut-form-url" required>
+
+                <input
+                    class="text-lg border border-solid border-indigo-600 rounded-md shadow-sm px-5 py-3 cursor-pointer font-medium text-white bg-indigo-600 hover:bg-indigo-700 w-28"
+                    type="submit" id="cut-form-submit" value="Cut">
+            </form>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
