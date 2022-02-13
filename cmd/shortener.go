@@ -5,8 +5,7 @@ import (
 )
 
 func main() {
-	app := app.App{}
+	app := app.New()
 
-	app.Init(3000)
-	app.Run()
+	app.Run(":3000")
 }

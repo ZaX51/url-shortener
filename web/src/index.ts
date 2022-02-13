@@ -25,7 +25,11 @@ async function submit(event: SubmitEvent) {
 
   const url = formInput.value;
 
-  const reponse = await fetch('/cut', { method: 'POST', body: JSON.stringify({ url } as CutRequestBody) });
+  const reponse = await fetch('/cut', {
+    method: 'POST',
+    body: JSON.stringify({ url } as CutRequestBody),
+    headers: { 'Content-Type': 'application/json' },
+  });
   const data: CutResponse = await reponse.json();
 
   resultInput.value = data.url;

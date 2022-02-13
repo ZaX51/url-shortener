@@ -1,45 +1,46 @@
 package app
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/ZaX51/url-shortener/internal/url_storage"
-	"github.com/gorilla/mux"
+	"github.com/ZaX51/url-shortener/internal/validator"
+	"github.com/gofiber/fiber/v2"
 )
 
 type App struct {
-	server      *http.Server
+	server      *fiber.App
 	url_storage *url_storage.UrlStorage
+	validator   *validator.Validator
 }
 
-func (p *App) Init(port int) {
-	r := mux.NewRouter()
+func New() *App {
+	app := new(App)
 
-	r.HandleFunc("/cut", p.handleUrlCut).Methods(http.MethodPost)
-	r.HandleFunc("/{hash}", p.handleUrlOpen).Methods(http.MethodGet)
-
-	p.server = &http.Server{
-		Addr:         fmt.Sprintf(":%d", port),
-		Handler:      r,
+	app.server = fiber.New(fiber.Config{
 		WriteTimeout: 10 * time.Second,
 		ReadTimeout:  10 * time.Second,
-	}
+	})
 
-	p.url_storage = &url_storage.UrlStorage{
+	app.server.Post("/cut", app.handleUrlCut)
+	app.server.Get("/:hash", app.handleUrlOpen)
+
+	app.url_storage = &url_storage.UrlStorage{
 		Addr:       "localhost:6379",
 		Expiration: 20 * time.Second,
 	}
+
+	app.validator = validator.New()
+
+	return app
 }
 
-func (p *App) Run() {
+func (p *App) Run(addr string) {
 	err := p.url_storage.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Server listening on %s\n", p.server.Addr)
-	log.Fatal(p.server.ListenAndServe())
+	p.server.Listen(addr)
 }

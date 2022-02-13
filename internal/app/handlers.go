@@ -1,12 +1,11 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/ZaX51/url-shortener/internal/encoder"
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber/v2"
 )
 
 type UrlCutRequest struct {
@@ -19,47 +18,45 @@ type UrlCutResponse struct {
 
 const urlLength = 7
 
-func (p *App) handleUrlCut(responseWriter http.ResponseWriter, request *http.Request) {
-	var b UrlCutRequest
+func (p *App) handleUrlCut(c *fiber.Ctx) error {
+	body := new(UrlCutRequest)
 
-	err := json.NewDecoder(request.Body).Decode(&b)
+	err := c.BodyParser(&body)
 	if err != nil {
-		http.Error(responseWriter, "Invalid body", http.StatusBadRequest)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": `Cannot parse JSON`,
+		})
 	}
 
-	if len(b.Url) == 0 {
-		http.Error(responseWriter, `Missing or empty "url" field`, http.StatusBadRequest)
-		return
-	}
-
-	hash := encoder.Encode(b.Url, urlLength)
-
-	err = p.url_storage.Set(hash, b.Url)
+	err = p.validator.ValidateUrl(body.Url)
 	if err != nil {
-		http.Error(responseWriter, "Internal Server Error", http.StatusInternalServerError)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
-	responseWriter.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(responseWriter).Encode(UrlCutResponse{
+	hash := encoder.Encode(body.Url, urlLength)
+
+	err = p.url_storage.Set(hash, body.Url)
+	if err != nil {
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	return c.JSON(UrlCutResponse{
 		Url: fmt.Sprintf("http://localhost:3000/%v", hash),
 	})
 }
 
-func (p *App) handleUrlOpen(responseWriter http.ResponseWriter, request *http.Request) {
-	vars := mux.Vars(request)
-	hash := vars["hash"]
+func (p *App) handleUrlOpen(c *fiber.Ctx) error {
+	hash := c.Params("hash")
 
 	url, err := p.url_storage.Get(hash)
 	if err != nil {
-		http.Error(responseWriter, "Internal Server Error", http.StatusInternalServerError)
-		return
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 	if len(url) == 0 {
-		http.Error(responseWriter, "Not Found", http.StatusNotFound)
-		return
+		return c.SendStatus(http.StatusNotFound)
 	}
 
-	http.Redirect(responseWriter, request, url, http.StatusSeeOther)
+	return c.Redirect(url, http.StatusSeeOther)
 }
