@@ -6,7 +6,7 @@ import (
 	"github.com/ZaX51/url-shortener/internal/base62"
 )
 
-func TestTobase64EmptyArray(t *testing.T) {
+func TestToBase64EmptyArray(t *testing.T) {
 	result := base62.ToBase62([]byte{})
 
 	if len(result) != 0 {
@@ -14,7 +14,7 @@ func TestTobase64EmptyArray(t *testing.T) {
 	}
 }
 
-func TestTobase64OneItemArray(t *testing.T) {
+func TestToBase64OneItemArray(t *testing.T) {
 	result := base62.ToBase62([]byte{0x61})
 
 	expected := "1Z"
@@ -24,7 +24,7 @@ func TestTobase64OneItemArray(t *testing.T) {
 	}
 }
 
-func TestTobase64String(t *testing.T) {
+func TestToBase64String(t *testing.T) {
 	result := base62.ToBase62([]byte("qwertyzaerty"))
 
 	expected := "jfXgVTpHPdtEqTpB"
@@ -34,7 +34,7 @@ func TestTobase64String(t *testing.T) {
 	}
 }
 
-func TestTobase64UrlString(t *testing.T) {
+func TestToBase64UrlString(t *testing.T) {
 	result := base62.ToBase62([]byte("https://test.test"))
 
 	expected := "D7qW2GM8nm2wH4FoGdNnDXw"

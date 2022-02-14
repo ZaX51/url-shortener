@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"fmt"
+	"errors"
 	"net/url"
 	"regexp"
 )
@@ -21,17 +21,23 @@ func New() *Validator {
 
 func (v *Validator) ValidateUrl(str string) error {
 	if len(str) == 0 {
-		return fmt.Errorf("empty URL")
+		return errors.New("empty URL")
 	}
 
 	parsedUrl, err := url.ParseRequestURI(str)
 	if err != nil {
-		return fmt.Errorf("bad URL")
+		return errors.New("bad URL")
+	}
+
+	switch parsedUrl.Scheme {
+	case "http", "https":
+	default:
+		return errors.New("invalid scheme")
 	}
 
 	res := v.rgexp.MatchString(parsedUrl.Hostname())
 	if res {
-		return fmt.Errorf("used restricted domain name")
+		return errors.New("used restricted domain name")
 	}
 
 	return nil
