@@ -9,13 +9,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type Config struct {
+	Domain          string
+	UrlLength       int
+	RedisAddr       string
+	RedisExpiration time.Duration
+}
+
 type App struct {
+	domain      string
+	urlLength   int
 	server      *fiber.App
 	url_storage *url_storage.UrlStorage
 	validator   *validator.Validator
 }
 
-func New() *App {
+func New(config Config) *App {
 	app := new(App)
 
 	app.server = fiber.New(fiber.Config{
@@ -27,11 +36,14 @@ func New() *App {
 	app.server.Get("/:hash", app.handleUrlOpen)
 
 	app.url_storage = &url_storage.UrlStorage{
-		Addr:       "localhost:6379",
-		Expiration: 20 * time.Second,
+		Addr:       config.RedisAddr,
+		Expiration: config.RedisExpiration,
 	}
 
-	app.validator = validator.New()
+	app.validator = validator.New(config.Domain)
+
+	app.domain = config.Domain
+	app.urlLength = config.UrlLength
 
 	return app
 }

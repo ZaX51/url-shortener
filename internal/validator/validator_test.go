@@ -7,8 +7,10 @@ import (
 	"github.com/ZaX51/url-shortener/internal/validator"
 )
 
+const test_domain = "domain.xyz"
+
 func TestValidatorEmptyInput(t *testing.T) {
-	validator := validator.New()
+	validator := validator.New(test_domain)
 	input := ""
 
 	err := validator.ValidateUrl(input)
@@ -19,7 +21,7 @@ func TestValidatorEmptyInput(t *testing.T) {
 }
 
 func TestValidatorValidUrl(t *testing.T) {
-	validator := validator.New()
+	validator := validator.New(test_domain)
 	input := "http://test.xyz"
 
 	err := validator.ValidateUrl(input)
@@ -30,7 +32,7 @@ func TestValidatorValidUrl(t *testing.T) {
 }
 
 func TestValidatorValidHttpsUrl(t *testing.T) {
-	validator := validator.New()
+	validator := validator.New(test_domain)
 	input := "https://test.xyz"
 
 	err := validator.ValidateUrl(input)
@@ -43,7 +45,7 @@ func TestValidatorValidHttpsUrl(t *testing.T) {
 }
 
 func TestValidatorInvalidUrl(t *testing.T) {
-	validator := validator.New()
+	validator := validator.New(test_domain)
 	input := "test"
 
 	err := validator.ValidateUrl(input)
@@ -56,7 +58,7 @@ func TestValidatorInvalidUrl(t *testing.T) {
 }
 
 func TestValidatorInvalidUrlScheme(t *testing.T) {
-	validator := validator.New()
+	validator := validator.New(test_domain)
 	input := "ht://test.xyz"
 
 	err := validator.ValidateUrl(input)
@@ -69,8 +71,19 @@ func TestValidatorInvalidUrlScheme(t *testing.T) {
 }
 
 func TestValidatorRestrictedDomain(t *testing.T) {
-	validator := validator.New()
-	input := "http://localhost"
+	validator := validator.New(test_domain)
+	input := "http://domain.xyz/122"
+
+	err := validator.ValidateUrl(input)
+
+	if err == nil || err.Error() != "used restricted domain name" {
+		t.Errorf("Validator.ValidateUrl should return error on input with restricted domain: '%s'", input)
+	}
+}
+
+func TestValidatorRestrictedSubDomain(t *testing.T) {
+	validator := validator.New(test_domain)
+	input := "http://subdomain.domain.xyz"
 
 	err := validator.ValidateUrl(input)
 

@@ -2,6 +2,7 @@ package validator
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 	"regexp"
 )
@@ -10,11 +11,9 @@ type Validator struct {
 	rgexp *regexp.Regexp
 }
 
-const regexpStr = `^(.*)localhost$`
-
-func New() *Validator {
+func New(domain string) *Validator {
 	validator := new(Validator)
-	validator.rgexp = regexp.MustCompile(regexpStr)
+	validator.rgexp = regexp.MustCompile(fmt.Sprintf("^(.*)%s$", domain))
 
 	return validator
 }

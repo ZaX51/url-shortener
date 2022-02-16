@@ -16,8 +16,6 @@ type UrlCutResponse struct {
 	Url string `json:"url"`
 }
 
-const urlLength = 7
-
 func (p *App) handleUrlCut(c *fiber.Ctx) error {
 	body := new(UrlCutRequest)
 
@@ -35,7 +33,7 @@ func (p *App) handleUrlCut(c *fiber.Ctx) error {
 		})
 	}
 
-	hash := encoder.Encode(body.Url, urlLength)
+	hash := encoder.Encode(body.Url, p.urlLength)
 
 	err = p.url_storage.Set(hash, body.Url)
 	if err != nil {
@@ -43,7 +41,7 @@ func (p *App) handleUrlCut(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(UrlCutResponse{
-		Url: fmt.Sprintf("http://localhost:3000/%v", hash),
+		Url: fmt.Sprintf("http://%v/%v", p.domain, hash), // TODO: return https
 	})
 }
 
