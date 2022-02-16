@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/ZaX51/url-shortener/internal/base62"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestToBase64EmptyArray(t *testing.T) {
@@ -19,9 +20,7 @@ func TestToBase64OneItemArray(t *testing.T) {
 
 	expected := "1Z"
 
-	if result != expected {
-		t.Errorf("ToBase62 = %s; want '%s' string", result, expected)
-	}
+	assert.Equal(t, expected, result)
 }
 
 func TestToBase64String(t *testing.T) {
@@ -29,9 +28,7 @@ func TestToBase64String(t *testing.T) {
 
 	expected := "jfXgVTpHPdtEqTpB"
 
-	if result != expected {
-		t.Errorf("ToBase62 = %s; want '%s' string", result, expected)
-	}
+	assert.Equal(t, expected, result)
 }
 
 func TestToBase64UrlString(t *testing.T) {
@@ -39,7 +36,5 @@ func TestToBase64UrlString(t *testing.T) {
 
 	expected := "D7qW2GM8nm2wH4FoGdNnDXw"
 
-	if result != expected {
-		t.Errorf("ToBase62 = %s; want '%s' string", result, expected)
-	}
+	assert.Equal(t, expected, result)
 }

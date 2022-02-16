@@ -1,10 +1,10 @@
 package validator_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ZaX51/url-shortener/internal/validator"
+	"github.com/stretchr/testify/assert"
 )
 
 const test_domain = "domain.xyz"
@@ -15,9 +15,7 @@ func TestValidatorEmptyInput(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	if err == nil || err.Error() != "empty URL" {
-		t.Errorf("Validator.ValidateUrl should return error on input: '%s'", input)
-	}
+	assert.EqualError(t, err, "empty URL")
 }
 
 func TestValidatorValidUrl(t *testing.T) {
@@ -26,9 +24,7 @@ func TestValidatorValidUrl(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	if err != nil {
-		t.Errorf("Validator.ValidateUrl returned error on input: '%s'", input)
-	}
+	assert.NoError(t, err)
 }
 
 func TestValidatorValidHttpsUrl(t *testing.T) {
@@ -37,11 +33,7 @@ func TestValidatorValidHttpsUrl(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	fmt.Println(err)
-
-	if err != nil {
-		t.Errorf("Validator.ValidateUrl returned error on input: '%s'", input)
-	}
+	assert.NoError(t, err)
 }
 
 func TestValidatorInvalidUrl(t *testing.T) {
@@ -50,11 +42,7 @@ func TestValidatorInvalidUrl(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	fmt.Println(err)
-
-	if err == nil || err.Error() != "bad URL" {
-		t.Errorf("Validator.ValidateUrl should return error on input with invalid scheme: '%s'", input)
-	}
+	assert.EqualError(t, err, "bad URL")
 }
 
 func TestValidatorInvalidUrlScheme(t *testing.T) {
@@ -63,11 +51,7 @@ func TestValidatorInvalidUrlScheme(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	fmt.Println(err)
-
-	if err == nil || err.Error() != "invalid scheme" {
-		t.Errorf("Validator.ValidateUrl should return error on input with invalid scheme: '%s'", input)
-	}
+	assert.EqualError(t, err, "invalid scheme")
 }
 
 func TestValidatorRestrictedDomain(t *testing.T) {
@@ -76,9 +60,7 @@ func TestValidatorRestrictedDomain(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	if err == nil || err.Error() != "used restricted domain name" {
-		t.Errorf("Validator.ValidateUrl should return error on input with restricted domain: '%s'", input)
-	}
+	assert.EqualError(t, err, "used restricted domain name")
 }
 
 func TestValidatorRestrictedSubDomain(t *testing.T) {
@@ -87,7 +69,5 @@ func TestValidatorRestrictedSubDomain(t *testing.T) {
 
 	err := validator.ValidateUrl(input)
 
-	if err == nil || err.Error() != "used restricted domain name" {
-		t.Errorf("Validator.ValidateUrl should return error on input with restricted domain: '%s'", input)
-	}
+	assert.EqualError(t, err, "used restricted domain name")
 }
