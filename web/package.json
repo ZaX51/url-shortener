@@ -1,17 +1,19 @@
 {
   "name": "web",
   "private": true,
+  "source": "src/index.html",
   "scripts": {
-    "build": "parcel build src/index.html",
-    "dev": "parcel src/index.html",
+    "build": "parcel build",
+    "dev": "parcel",
     "format": "prettier --write ./src"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.4.0",
-    "autoprefixer": "^10.4.2",
-    "parcel": "^2.2.1",
-    "postcss": "^8.4.5",
-    "prettier": "^2.5.1",
-    "tailwindcss": "^3.0.15"
+    "@tailwindcss/forms": "^0.5.2",
+    "autoprefixer": "^10.4.7",
+    "parcel": "^2.6.2",
+    "postcss": "^8.4.14",
+    "prettier": "^2.7.1",
+    "process": "^0.11.10",
+    "tailwindcss": "^3.1.4"
   }
 }

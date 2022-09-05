@@ -1,7 +1,7 @@
-import { CutRequestBody, CutResponse } from './types';
+import { getShortenedUrl } from './apiClient';
 
-const formElement = document.getElementById('cut-form');
-const resultElement = document.getElementById('cut-result');
+const formElement = document.getElementById('cut-form') as HTMLElement;
+const resultElement = document.getElementById('cut-result') as HTMLElement;
 
 const formInput = document.getElementById('cut-form-url') as HTMLInputElement;
 const resultInput = document.getElementById('cut-result-input') as HTMLInputElement;
@@ -18,31 +18,19 @@ function nextUrl(initValue = '') {
 
   resultInput.value = '';
   formInput.value = initValue;
+
+  formInput.focus();
 }
 
 async function submit(event: SubmitEvent) {
   event.preventDefault();
 
-  const url = formInput.value;
+  const url = await getShortenedUrl(formInput.value);
 
-  const reponse = await fetch('/cut', {
-    method: 'POST',
-    body: JSON.stringify({ url } as CutRequestBody),
-    headers: { 'Content-Type': 'application/json' },
-  });
-  const data: CutResponse = await reponse.json();
-
-  resultInput.value = data.url;
+  resultInput.value = url;
   toggleElementsVisiblity();
 
-  resultInput.addEventListener(
-    'input',
-    () => {
-      nextUrl(resultInput.value);
-      formInput.focus();
-    },
-    { once: true }
-  );
+  resultInput.addEventListener('input', () => nextUrl(resultInput.value), { once: true });
 }
 
 function copyUrl() {
