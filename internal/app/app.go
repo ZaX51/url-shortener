@@ -32,8 +32,8 @@ func New(config Config) *App {
 		ReadTimeout:  10 * time.Second,
 	})
 
-	app.server.Post("/cut", app.handleUrlCut)
-	app.server.Get("/:hash", app.handleUrlOpen)
+	app.server.Post("/cut", app.urlCut)
+	app.server.Get("/:hash", app.urlOpen)
 
 	app.url_storage = &url_storage.UrlStorage{
 		Addr:       config.RedisAddr,

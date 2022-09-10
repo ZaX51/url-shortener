@@ -20,23 +20,23 @@ func New(domain string) *Validator {
 
 func (v *Validator) ValidateUrl(str string) error {
 	if len(str) == 0 {
-		return errors.New("empty URL")
+		return errors.New("EMPTY_URL")
 	}
 
 	parsedUrl, err := url.ParseRequestURI(str)
 	if err != nil {
-		return errors.New("bad URL")
+		return errors.New("BAD_URL")
 	}
 
 	switch parsedUrl.Scheme {
 	case "http", "https":
 	default:
-		return errors.New("invalid scheme")
+		return errors.New("INVALID_SCHEME")
 	}
 
-	res := v.rgexp.MatchString(parsedUrl.Hostname())
+	res := v.rgexp.MatchString(parsedUrl.Host)
 	if res {
-		return errors.New("used restricted domain name")
+		return errors.New("RESTRICTED_DOMAIN")
 	}
 
 	return nil

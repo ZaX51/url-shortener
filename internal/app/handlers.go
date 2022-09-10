@@ -16,13 +16,13 @@ type UrlCutResponse struct {
 	Url string `json:"url"`
 }
 
-func (p *App) handleUrlCut(c *fiber.Ctx) error {
+func (p *App) urlCut(c *fiber.Ctx) error {
 	body := new(UrlCutRequest)
 
 	err := c.BodyParser(&body)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"message": `Cannot parse JSON`,
+			"message": `BODY_ERROR`,
 		})
 	}
 
@@ -41,11 +41,11 @@ func (p *App) handleUrlCut(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(UrlCutResponse{
-		Url: fmt.Sprintf("http://%v/%v", p.domain, hash), // TODO: return https
+		Url: fmt.Sprintf("%v/%v", p.domain, hash),
 	})
 }
 
-func (p *App) handleUrlOpen(c *fiber.Ctx) error {
+func (p *App) urlOpen(c *fiber.Ctx) error {
 	hash := c.Params("hash")
 
 	url, err := p.url_storage.Get(hash)
